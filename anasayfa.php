@@ -62,7 +62,7 @@ if ($arama !== '') {
         <div class="card">
             <h2 style="text-align: center; margin-bottom: 20px;">İş İlanlarını Keşfedin</h2>
             
-            <form action="anasayfa.php" method="GET" class="search-bar">
+            <form action="anasayfa.php" method="GET" class="search-bar" accept-charset="UTF-8">
                 <input type="text" name="q" placeholder="Pozisyon, yetenek, şirket veya konum ara..." value="<?= htmlspecialchars($arama) ?>">
                 <button type="submit" class="btn">Ara</button>
             </form>

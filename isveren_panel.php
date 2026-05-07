@@ -58,7 +58,7 @@ $basvurular = $stmt->get_result();
 
             <div class="card">
                 <h3>Yeni İlan Ver</h3>
-                <form action="islem.php" method="POST">
+                <form action="islem.php" method="POST" accept-charset="UTF-8">
                     <input type="hidden" name="islem" value="ilan_ekle">
                     <div class="form-group"><input type="text" name="pozisyon" placeholder="Pozisyon Adı" required></div>
                     <div class="form-group"><textarea name="aciklama" placeholder="İlan Açıklaması" rows="4"></textarea></div>

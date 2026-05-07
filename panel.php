@@ -127,11 +127,11 @@ $basvurular = $stmt->get_result();
 
             <div class="card">
                 <h3>Profil Güncelle</h3>
-                <form action="islem.php" method="POST">
+                <form action="islem.php" method="POST" accept-charset="UTF-8">
                     <input type="hidden" name="islem" value="profil_guncelle">
                     <div class="form-group">
                         <label>Telefon</label>
-                        <input type="text" name="telefon" value="<?= htmlspecialchars($aday['telefon']) ?>" required>
+                        <input type="text" name="telefon" value="<?= htmlspecialchars($aday['telefon']) ?>" pattern="[0-9]{11}" minlength="11" maxlength="11" title="Lütfen 11 haneli telefon numaranızı (sadece rakam) girin" required>
                     </div>
                     <div class="form-group">
                         <label>Meslek</label>
@@ -143,7 +143,7 @@ $basvurular = $stmt->get_result();
 
             <div class="card">
                 <h3>Eğitim Ekle</h3>
-                <form action="islem.php" method="POST">
+                <form action="islem.php" method="POST" accept-charset="UTF-8">
                     <input type="hidden" name="islem" value="egitim_ekle">
                     <div class="form-group"><input type="text" name="okul" placeholder="Okul Adı" required></div>
                     <div class="form-group"><input type="text" name="bolum" placeholder="Bölüm" required></div>
@@ -155,7 +155,7 @@ $basvurular = $stmt->get_result();
 
             <div class="card">
                 <h3>Deneyim Ekle</h3>
-                <form action="islem.php" method="POST">
+                <form action="islem.php" method="POST" accept-charset="UTF-8">
                     <input type="hidden" name="islem" value="deneyim_ekle">
                     <div class="form-group"><input type="text" name="sirket" placeholder="Şirket" required></div>
                     <div class="form-group"><input type="text" name="pozisyon" placeholder="Pozisyon" required></div>
@@ -173,7 +173,7 @@ $basvurular = $stmt->get_result();
 
             <div class="card">
                 <h3>Yetenek Ekle</h3>
-                <form action="islem.php" method="POST">
+                <form action="islem.php" method="POST" accept-charset="UTF-8">
                     <input type="hidden" name="islem" value="yetenek_ekle">
                     <div class="form-group"><input type="text" name="yetenek_adi" placeholder="Yetenek Adı (Örn: PHP)" required></div>
                     <div class="form-group"><input type="text" name="kategori" placeholder="Kategori (Örn: Yazılım)"></div>

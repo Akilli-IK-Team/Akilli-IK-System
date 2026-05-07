@@ -16,7 +16,7 @@
             <div class="tab" onclick="switchTab('isveren')">İşveren Kaydı</div>
         </div>
 
-        <form action="islem.php" method="POST" id="registerForm">
+        <form action="islem.php" method="POST" id="registerForm" accept-charset="UTF-8">
             <input type="hidden" name="islem" value="kayit">
             <input type="hidden" name="user_type" id="userType" value="aday">
 
@@ -59,7 +59,7 @@
             </div>
             <div class="form-group">
                 <label for="telefon">Telefon Numarası</label>
-                <input type="text" id="telefon" name="telefon" placeholder="05XXXXXXXXX">
+                <input type="text" id="telefon" name="telefon" placeholder="05XXXXXXXXX" pattern="[0-9]{11}" minlength="11" maxlength="11" title="Lütfen 11 haneli telefon numaranızı (sadece rakam) girin" required>
             </div>
             <div class="form-group">
                 <label for="sifre">Şifre</label>
