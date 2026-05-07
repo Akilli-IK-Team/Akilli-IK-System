@@ -55,6 +55,7 @@ $basvurular = $stmt->get_result();
         <div class="logo">IKSystem</div>
         <div class="nav-links">
             <span style="color: #fff; margin-right: 20px;">Merhaba, <?= htmlspecialchars($aday['ad'] . ' ' . $aday['soyad']) ?></span>
+            <a href="anasayfa.php" style="color: var(--neon-pink); font-weight: bold;">Anasayfaya Dön</a>
             <a href="islem.php?islem=cikis">Çıkış Yap</a>
         </div>
     </div>
@@ -67,6 +68,77 @@ $basvurular = $stmt->get_result();
                 <p><strong>Meslek:</strong> <?= htmlspecialchars($aday['meslek']) ?></p>
                 <p><strong>Email:</strong> <?= htmlspecialchars($aday['email']) ?></p>
                 <p><strong>Telefon:</strong> <?= htmlspecialchars($aday['telefon']) ?></p>
+                <hr style="border-color: var(--glass-border); margin: 15px 0;">
+                
+                <h4 style="margin-bottom: 10px; color: var(--neon-pink);">Yeteneklerim</h4>
+                <div style="margin-bottom: 15px;">
+                    <?php if($yetenekler->num_rows > 0): ?>
+                        <?php while($y = $yetenekler->fetch_assoc()): ?>
+                            <div style="display: inline-block; margin-bottom: 5px;">
+                                <span class="badge pink" style="margin-right: 5px;"><?= htmlspecialchars($y['yetenek_adi']) ?> (<?= htmlspecialchars($y['seviye']) ?>)</span>
+                                <form action="islem.php" method="POST" style="display: inline;">
+                                    <input type="hidden" name="islem" value="yetenek_sil">
+                                    <input type="hidden" name="yetenek_id" value="<?= $y['yetenek_id'] ?>">
+                                    <button type="submit" style="background: none; border: none; color: #ff6b6b; cursor: pointer; font-size: 0.8rem;">[x]</button>
+                                </form>
+                            </div>
+                        <?php endwhile; ?>
+                    <?php else: ?>
+                        <p style="font-size: 0.8rem; color: #aaa;">Henüz yetenek eklenmedi.</p>
+                    <?php endif; ?>
+                </div>
+
+                <h4 style="margin-bottom: 10px; color: var(--neon-purple);">Eğitim Bilgilerim</h4>
+                <div style="margin-bottom: 15px;">
+                    <?php if($egitimler->num_rows > 0): ?>
+                        <?php while($e = $egitimler->fetch_assoc()): ?>
+                            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 5px; margin-bottom: 5px;">
+                                <p style="font-size: 0.9rem; margin:0;">🎓 <strong><?= htmlspecialchars($e['okul']) ?></strong> - <?= htmlspecialchars($e['bolum']) ?> (<?= htmlspecialchars($e['mezuniyet_yili']) ?>)</p>
+                                <form action="islem.php" method="POST" style="margin: 0;">
+                                    <input type="hidden" name="islem" value="egitim_sil">
+                                    <input type="hidden" name="egitim_id" value="<?= $e['egitim_id'] ?>">
+                                    <button type="submit" style="background: rgba(255,0,0,0.2); border: none; color: #ff6b6b; cursor: pointer; font-size: 0.7rem; padding: 2px 5px; border-radius: 3px;">Sil</button>
+                                </form>
+                            </div>
+                        <?php endwhile; ?>
+                    <?php else: ?>
+                        <p style="font-size: 0.8rem; color: #aaa;">Henüz eğitim eklenmedi.</p>
+                    <?php endif; ?>
+                </div>
+
+                <h4 style="margin-bottom: 10px; color: var(--neon-purple);">Deneyimlerim</h4>
+                <div>
+                    <?php if($deneyimler->num_rows > 0): ?>
+                        <?php while($d = $deneyimler->fetch_assoc()): ?>
+                            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 5px; margin-bottom: 5px;">
+                                <p style="font-size: 0.9rem; margin:0;">💼 <strong><?= htmlspecialchars($d['sirket']) ?></strong> - <?= htmlspecialchars($d['pozisyon']) ?></p>
+                                <form action="islem.php" method="POST" style="margin: 0;">
+                                    <input type="hidden" name="islem" value="deneyim_sil">
+                                    <input type="hidden" name="deneyim_id" value="<?= $d['deneyim_id'] ?>">
+                                    <button type="submit" style="background: rgba(255,0,0,0.2); border: none; color: #ff6b6b; cursor: pointer; font-size: 0.7rem; padding: 2px 5px; border-radius: 3px;">Sil</button>
+                                </form>
+                            </div>
+                        <?php endwhile; ?>
+                    <?php else: ?>
+                        <p style="font-size: 0.8rem; color: #aaa;">Henüz deneyim eklenmedi.</p>
+                    <?php endif; ?>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>Profil Güncelle</h3>
+                <form action="islem.php" method="POST">
+                    <input type="hidden" name="islem" value="profil_guncelle">
+                    <div class="form-group">
+                        <label>Telefon</label>
+                        <input type="text" name="telefon" value="<?= htmlspecialchars($aday['telefon']) ?>" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Meslek</label>
+                        <input type="text" name="meslek" value="<?= htmlspecialchars($aday['meslek']) ?>" required>
+                    </div>
+                    <button type="submit" class="btn">Güncelle</button>
+                </form>
             </div>
 
             <div class="card">
@@ -136,31 +208,16 @@ $basvurular = $stmt->get_result();
                             <p><?= htmlspecialchars($b['sirket_adi']) ?></p>
                             <span class="badge">Durum: <?= htmlspecialchars($b['durum']) ?></span>
                             <span class="badge pink">AI Skor: %<?= $b['ai_eslesme_skoru'] ?></span>
+                            <form action="islem.php" method="POST" style="margin-top: 10px;">
+                                <input type="hidden" name="islem" value="basvuru_sil">
+                                <input type="hidden" name="basvuru_id" value="<?= $b['basvuru_id'] ?>">
+                                <button type="submit" class="btn" style="padding: 5px 10px; font-size: 0.8rem; background: rgba(255,0,0,0.2); color: #ff6b6b; border: 1px solid rgba(255,0,0,0.5);">İptal Et</button>
+                            </form>
                         </div>
                     <?php endwhile; ?>
                 <?php else: ?>
                     <p style="color: #aaa;">Henüz başvuru yapmadınız.</p>
                 <?php endif; ?>
-            </div>
-
-            <div class="card">
-                <h3>Açık İş İlanları</h3>
-                <?php while($ilan = $ilanlar->fetch_assoc()): ?>
-                    <div class="list-item">
-                        <h4><?= htmlspecialchars($ilan['pozisyon']) ?></h4>
-                        <p><strong>Şirket:</strong> <?= htmlspecialchars($ilan['sirket_adi']) ?></p>
-                        <p><strong>Açıklama:</strong> <?= htmlspecialchars($ilan['aciklama']) ?></p>
-                        <p><strong>Konum:</strong> <?= htmlspecialchars($ilan['konum']) ?></p>
-                        <p><strong>Maaş:</strong> <?= htmlspecialchars($ilan['maas_araligi']) ?></p>
-                        <span class="badge">Son Başvuru: <?= htmlspecialchars($ilan['son_basvuru']) ?></span>
-                        
-                        <form action="islem.php" method="POST" style="margin-top: 15px;">
-                            <input type="hidden" name="islem" value="basvuru_yap">
-                            <input type="hidden" name="ilan_id" value="<?= $ilan['ilan_id'] ?>">
-                            <button type="submit" class="btn" style="padding: 8px;">Hemen Başvur</button>
-                        </form>
-                    </div>
-                <?php endwhile; ?>
             </div>
         </div>
     </div>
