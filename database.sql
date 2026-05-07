@@ -28,6 +28,7 @@ CREATE TABLE IF NOT EXISTS is_ilani (
     aciklama TEXT,
     maas_araligi VARCHAR(100),
     konum VARCHAR(150),
+    istenen_yetenekler TEXT,
     son_basvuru DATE,
     FOREIGN KEY (isveren_id) REFERENCES isveren(isveren_id) ON DELETE CASCADE
 );

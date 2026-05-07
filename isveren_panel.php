@@ -41,6 +41,7 @@ $basvurular = $stmt->get_result();
         <div class="logo">IKSystem (İşveren)</div>
         <div class="nav-links">
             <span style="color: #fff; margin-right: 20px;">Hoşgeldiniz, <?= htmlspecialchars($_SESSION['user_name']) ?></span>
+            <a href="anasayfa.php" style="color: var(--neon-purple); font-weight: bold;">Anasayfaya Dön</a>
             <a href="islem.php?islem=cikis">Çıkış Yap</a>
         </div>
     </div>
@@ -63,6 +64,7 @@ $basvurular = $stmt->get_result();
                     <div class="form-group"><textarea name="aciklama" placeholder="İlan Açıklaması" rows="4"></textarea></div>
                     <div class="form-group"><input type="text" name="maas_araligi" placeholder="Maaş Aralığı (Örn: 20K - 30K)"></div>
                     <div class="form-group"><input type="text" name="konum" placeholder="Konum (Örn: İstanbul / Uzaktan)"></div>
+                    <div class="form-group"><input type="text" name="istenen_yetenekler" placeholder="İstenen Yetenekler (Virgülle ayırın, Örn: PHP, MySQL, CSS)"></div>
                     <div class="form-group">
                         <label>Son Başvuru Tarihi</label>
                         <input type="date" name="son_basvuru" required>
@@ -78,7 +80,13 @@ $basvurular = $stmt->get_result();
                         <div class="list-item">
                             <h4><?= htmlspecialchars($ilan['pozisyon']) ?></h4>
                             <p><strong>Açıklama:</strong> <?= htmlspecialchars($ilan['aciklama']) ?></p>
+                            <p><strong>Aranan Yetenekler:</strong> <?= htmlspecialchars($ilan['istenen_yetenekler']) ?></p>
                             <span class="badge">Son Başvuru: <?= htmlspecialchars($ilan['son_basvuru']) ?></span>
+                            <form action="islem.php" method="POST" style="margin-top: 10px;">
+                                <input type="hidden" name="islem" value="ilan_sil">
+                                <input type="hidden" name="ilan_id" value="<?= $ilan['ilan_id'] ?>">
+                                <button type="submit" class="btn" style="padding: 5px 10px; font-size: 0.8rem; background: rgba(255,0,0,0.2); color: #ff6b6b; border: 1px solid rgba(255,0,0,0.5);">İlanı Sil</button>
+                            </form>
                         </div>
                     <?php endwhile; ?>
                 <?php else: ?>
