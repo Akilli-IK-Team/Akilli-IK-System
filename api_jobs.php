@@ -1,16 +1,16 @@
 <?php
 // api_jobs.php
-// İş ilanlarını veritabanından çekip JSON formatında frontend'e gönderir (AJAX için)
+// Fetches job postings from the database and sends them to the frontend in JSON format (for AJAX)
 
 header('Content-Type: application/json; charset=utf-8');
 require_once 'db_connect.php';
 
-// Arama sorgusu var mı kontrol et
+// Check if there is a search query
 $search = isset($_GET['search']) ? $_GET['search'] : '';
 
 try {
     if ($search) {
-        // Arama yapıldıysa başlığa veya açıklamaya göre filtrele (Prepared Statement kullanımı)
+        // If searching, filter by title or description (Using Prepared Statements)
         $stmt = $pdo->prepare("
             SELECT j.job_id, j.title, j.description, e.company_name 
             FROM Jobs j
@@ -20,7 +20,7 @@ try {
         ");
         $stmt->execute(['search' => '%' . $search . '%']);
     } else {
-        // Arama yoksa tüm işleri getir
+        // If no search, fetch all jobs
         $stmt = $pdo->query("
             SELECT j.job_id, j.title, j.description, e.company_name 
             FROM Jobs j
@@ -31,7 +31,7 @@ try {
 
     $jobs = $stmt->fetchAll();
 
-    // Her iş için gereken yetenekleri de çekiyoruz
+    // Fetch required skills for each job
     foreach ($jobs as &$job) {
         $skill_stmt = $pdo->prepare("
             SELECT s.skill_name 
@@ -40,18 +40,18 @@ try {
             WHERE js.job_id = :job_id
         ");
         $skill_stmt->execute(['job_id' => $job['job_id']]);
-        $job['skills'] = $skill_stmt->fetchAll(PDO::FETCH_COLUMN); // Sadece skill_name array'i döner
+        $job['skills'] = $skill_stmt->fetchAll(PDO::FETCH_COLUMN); // Returns only skill_name array
         
-        // Örnek eşleşme skoru (Gerçek sistemde giriş yapan adayın yeteneklerine göre hesaplanır)
-        // Şimdilik görsel amaçlı rastgele veya sabit bir skor veriyoruz.
+        // Sample match score (In a real system, this is calculated based on the logged-in candidate's skills)
+        // Providing a random or fixed score for visual purposes for now.
         $job['match_score'] = rand(70, 100); 
     }
 
-    // JSON olarak çıktıyı bas
+    // Output as JSON
     echo json_encode($jobs);
 
 } catch (\PDOException $e) {
     http_response_code(500);
-    echo json_encode(['error' => 'Veritabanı hatası oluştu.']);
+    echo json_encode(['error' => 'A database error occurred.']);
 }
 ?>

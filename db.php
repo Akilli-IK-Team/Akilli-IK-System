@@ -1,10 +1,10 @@
 <?php
 session_start();
 
-$servername = "localhost";
-$username = "root";
-$password = ""; // Your MySQL password if any
-$dbname = "akilli_ik";
+$servername = "sql101.infinityfree.com";
+$username = "if0_41854834";
+$password = "akilliiksistemi"; 
+$dbname = "if0_41854834_ik_sistemi";
 
 // Create connection using MySQLi
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT); // Enable error reporting

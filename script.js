@@ -1,29 +1,29 @@
 // script.js
-// Frontend Mantığı ve AJAX İşlemleri
+// Frontend Logic and AJAX Operations
 
 document.addEventListener('DOMContentLoaded', () => {
     const searchInput = document.getElementById('searchInput');
     const jobList = document.getElementById('jobList');
 
-    // Sayfa yüklendiğinde ilanları getir
+    // Fetch jobs when the page loads
     fetchJobs('');
 
-    // Arama kutusuna yazı yazıldıkça ilanları getir (Debounce eklenebilir, basit tuttuk)
+    // Fetch jobs as the user types in the search box (Debounce could be added, kept simple)
     searchInput.addEventListener('input', function(e) {
         const query = e.target.value;
         fetchJobs(query);
     });
 
-    // Backend (PHP) API'sine istek atan fonksiyon
+    // Function to send requests to the Backend (PHP) API
     function fetchJobs(searchQuery) {
-        // API URL'sini oluştur
+        // Create the API URL
         const url = `api_jobs.php?search=${encodeURIComponent(searchQuery)}`;
 
-        // Fetch API kullanarak veriyi çek (AJAX yerine modern yöntem)
+        // Fetch data using the Fetch API (modern AJAX method)
         fetch(url)
             .then(response => {
                 if (!response.ok) {
-                    throw new Error('Ağ hatası: Veri çekilemedi.');
+                    throw new Error('Network error: Data could not be retrieved.');
                 }
                 return response.json();
             })
@@ -31,40 +31,40 @@ document.addEventListener('DOMContentLoaded', () => {
                 renderJobs(data);
             })
             .catch(error => {
-                console.error("Fetch Hatası:", error);
-                jobList.innerHTML = `<div class="col-span-full text-center text-red-500 font-semibold py-8">İlanlar yüklenirken bir hata oluştu veya Veritabanı bağlantısı yok.</div>`;
+                console.error("Fetch Error:", error);
+                jobList.innerHTML = `<div class="col-span-full text-center text-red-500 font-semibold py-8">An error occurred while loading jobs or there is no Database connection.</div>`;
             });
     }
 
-    // Gelen JSON verisini HTML'e çevirip DOM'a basan fonksiyon
+    // Function to convert received JSON data into HTML and inject it into the DOM
     function renderJobs(jobs) {
-        // Eğer sonuç yoksa mesaj göster
+        // Show message if no results are found
         if (jobs.length === 0) {
-            jobList.innerHTML = `<div class="col-span-full text-center text-gray-500 py-8">Aradığınız kritere uygun ilan bulunamadı.</div>`;
+            jobList.innerHTML = `<div class="col-span-full text-center text-gray-500 py-8">No job listings found matching your criteria.</div>`;
             return;
         }
 
-        // HTML içeriğini temizle
+        // Clear existing HTML content
         jobList.innerHTML = '';
 
-        // Her bir iş ilanı için HTML kartı oluştur
+        // Create an HTML card for each job listing
         jobs.forEach(job => {
-            // Yetenekleri (skills) HTML etiketlerine (badge) çevir
+            // Convert skills into HTML badges
             let skillsHtml = '';
             if (job.skills && job.skills.length > 0) {
                 job.skills.forEach(skill => {
                     skillsHtml += `<span class="bg-gray-100 text-gray-700 text-xs font-medium px-2.5 py-1 rounded-md border border-gray-200">${skill}</span>`;
                 });
             } else {
-                skillsHtml = `<span class="text-xs text-gray-400">Belirtilmemiş</span>`;
+                skillsHtml = `<span class="text-xs text-gray-400">Not specified</span>`;
             }
 
-            // Kart HTML'i
+            // Card HTML structure
             const card = document.createElement('div');
             card.className = "job-card group border rounded-xl p-6 bg-white border-gray-100 hover:border-brand-300 relative overflow-hidden";
             
             card.innerHTML = `
-                <div class="absolute top-0 right-0 bg-brand-100 text-brand-700 text-xs font-bold px-3 py-1 rounded-bl-lg">%${job.match_score} Eşleşme</div>
+                <div class="absolute top-0 right-0 bg-brand-100 text-brand-700 text-xs font-bold px-3 py-1 rounded-bl-lg">%${job.match_score} Match</div>
                 
                 <h3 class="font-bold text-xl text-gray-900 mt-2 group-hover:text-brand-700 transition">${job.title}</h3>
                 <p class="text-gray-500 text-sm mt-1 flex items-center">
@@ -77,7 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
                 
                 <button class="w-full mt-6 bg-white text-brand-600 border-2 border-brand-600 font-semibold py-2.5 rounded-lg group-hover:bg-brand-600 group-hover:text-white transition duration-300">
-                    Hemen Başvur
+                    Apply Now
                 </button>
             `;
             

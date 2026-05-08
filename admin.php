@@ -4,22 +4,22 @@ require_once 'db.php';
 $is_logged_in = isset($_SESSION['admin_logged_in']) && $_SESSION['admin_logged_in'] === true;
 
 if ($is_logged_in) {
-    // Adayları Çek
+    // Fetch Candidates
     $aday_sorgu = $conn->query("SELECT * FROM aday ORDER BY aday_id DESC");
 
-    // İşverenleri Çek
+    // Fetch Employers
     $isveren_sorgu = $conn->query("SELECT * FROM isveren ORDER BY isveren_id DESC");
 
-    // İlanları Çek
+    // Fetch Job Advertisements
     $ilan_sorgu = $conn->query("SELECT is_ilani.*, isveren.sirket_adi FROM is_ilani JOIN isveren ON is_ilani.isveren_id = isveren.isveren_id ORDER BY is_ilani.ilan_id DESC");
 }
 ?>
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Yöneticisi - IKSystem</title>
+    <title>System Administrator - IKSystem</title>
     <link rel="stylesheet" href="style.css">
     <style>
         table {
@@ -70,11 +70,11 @@ if ($is_logged_in) {
 <body>
 
     <div class="navbar">
-        <div class="logo">IKSystem (Admin Paneli)</div>
+        <div class="logo">IKSystem (Admin Panel)</div>
         <div class="nav-links">
-            <a href="index.php">Ana Sayfaya Dön</a>
+            <a href="index.php">Back to Home</a>
             <?php if($is_logged_in): ?>
-                <a href="admin_islem.php?islem=cikis" style="color: #ff6b6b; margin-left: 15px;">Güvenli Çıkış</a>
+                <a href="admin_islem.php?action=logout" style="color: #ff6b6b; margin-left: 15px;">Secure Logout</a>
             <?php endif; ?>
         </div>
     </div>
@@ -89,32 +89,32 @@ if ($is_logged_in) {
         <?php endif; ?>
 
         <?php if(!$is_logged_in): ?>
-            <!-- Admin Giriş Formu -->
+            <!-- Admin Login Form -->
             <div class="card admin-login-card">
-                <h3 style="text-align: center; color: var(--neon-pink);">Yönetici Girişi</h3>
+                <h3 style="text-align: center; color: var(--neon-pink);">Administrator Login</h3>
                 <form action="admin_islem.php" method="POST">
-                    <input type="hidden" name="islem" value="admin_giris">
+                    <input type="hidden" name="action" value="admin_login">
                     <div class="form-group">
-                        <label>Yönetici Şifresi</label>
-                        <input type="password" name="sifre" required placeholder="Şifrenizi girin">
+                        <label>Admin Password</label>
+                        <input type="password" name="password" required placeholder="Enter your password">
                     </div>
-                    <button type="submit" class="btn" style="width: 100%;">Giriş Yap</button>
+                    <button type="submit" class="btn" style="width: 100%;">Login</button>
                 </form>
             </div>
         <?php else: ?>
-            <!-- Admin Paneli İçeriği -->
+            <!-- Admin Panel Content -->
             <div class="card">
-                <h3 style="color: var(--neon-pink);">Kayıtlı Adaylar Yönetimi</h3>
+                <h3 style="color: var(--neon-pink);">Registered Candidates Management</h3>
                 <?php if($aday_sorgu->num_rows > 0): ?>
                     <table>
                         <thead>
                             <tr>
                                 <th>ID</th>
-                                <th>Ad Soyad</th>
+                                <th>Full Name</th>
                                 <th>Email</th>
-                                <th>Telefon</th>
-                                <th>Meslek</th>
-                                <th>İşlemler</th>
+                                <th>Phone</th>
+                                <th>Profession</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -126,16 +126,16 @@ if ($is_logged_in) {
                                     <td><?= htmlspecialchars($aday['telefon']) ?></td>
                                     <td><?= htmlspecialchars($aday['meslek']) ?></td>
                                     <td style="display: flex;">
-                                        <form action="admin_islem.php" method="POST" onsubmit="return confirm('Şifreyi 123456 yapmak istediğinize emin misiniz?');">
-                                            <input type="hidden" name="islem" value="sifre_sifirla">
-                                            <input type="hidden" name="hedef_tip" value="aday">
-                                            <input type="hidden" name="hedef_id" value="<?= $aday['aday_id'] ?>">
-                                            <button type="submit" class="action-btn btn-reset" title="Şifreyi Sıfırla">Sıfırla</button>
+                                        <form action="admin_islem.php" method="POST" onsubmit="return confirm('Are you sure you want to reset the password to 123456?');">
+                                            <input type="hidden" name="action" value="reset_password">
+                                            <input type="hidden" name="target_type" value="candidate">
+                                            <input type="hidden" name="target_id" value="<?= $aday['aday_id'] ?>">
+                                            <button type="submit" class="action-btn btn-reset" title="Reset Password">Reset</button>
                                         </form>
-                                        <form action="admin_islem.php" method="POST" onsubmit="return confirm('Bu adayı ve tüm verilerini silmek istediğinize emin misiniz? Bu işlem geri alınamaz!');">
-                                            <input type="hidden" name="islem" value="aday_sil">
-                                            <input type="hidden" name="aday_id" value="<?= $aday['aday_id'] ?>">
-                                            <button type="submit" class="action-btn btn-delete">Sil</button>
+                                        <form action="admin_islem.php" method="POST" onsubmit="return confirm('Are you sure you want to delete this candidate and all their data? This action cannot be undone!');">
+                                            <input type="hidden" name="action" value="delete_candidate">
+                                            <input type="hidden" name="candidate_id" value="<?= $aday['aday_id'] ?>">
+                                            <button type="submit" class="action-btn btn-delete">Delete</button>
                                         </form>
                                     </td>
                                 </tr>
@@ -143,22 +143,22 @@ if ($is_logged_in) {
                         </tbody>
                     </table>
                 <?php else: ?>
-                    <p>Sistemde henüz kayıtlı aday bulunmuyor.</p>
+                    <p>No registered candidates found in the system.</p>
                 <?php endif; ?>
             </div>
 
             <div class="card">
-                <h3 style="color: var(--neon-purple);">Kayıtlı İşverenler Yönetimi</h3>
+                <h3 style="color: var(--neon-purple);">Registered Employers Management</h3>
                 <?php if($isveren_sorgu->num_rows > 0): ?>
                     <table>
                         <thead>
                             <tr>
                                 <th>ID</th>
-                                <th>Şirket Adı</th>
-                                <th>Sektör</th>
+                                <th>Company Name</th>
+                                <th>Industry</th>
                                 <th>Email</th>
-                                <th>Telefon</th>
-                                <th>İşlemler</th>
+                                <th>Phone</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -170,16 +170,16 @@ if ($is_logged_in) {
                                     <td><?= htmlspecialchars($isveren['email']) ?></td>
                                     <td><?= htmlspecialchars($isveren['telefon']) ?></td>
                                     <td style="display: flex;">
-                                        <form action="admin_islem.php" method="POST" onsubmit="return confirm('Şifreyi 123456 yapmak istediğinize emin misiniz?');">
-                                            <input type="hidden" name="islem" value="sifre_sifirla">
-                                            <input type="hidden" name="hedef_tip" value="isveren">
-                                            <input type="hidden" name="hedef_id" value="<?= $isveren['isveren_id'] ?>">
-                                            <button type="submit" class="action-btn btn-reset" title="Şifreyi Sıfırla">Sıfırla</button>
+                                        <form action="admin_islem.php" method="POST" onsubmit="return confirm('Are you sure you want to reset the password to 123456?');">
+                                            <input type="hidden" name="action" value="reset_password">
+                                            <input type="hidden" name="target_type" value="employer">
+                                            <input type="hidden" name="target_id" value="<?= $isveren['isveren_id'] ?>">
+                                            <button type="submit" class="action-btn btn-reset" title="Reset Password">Reset</button>
                                         </form>
-                                        <form action="admin_islem.php" method="POST" onsubmit="return confirm('Bu işvereni ve tüm ilanlarını silmek istediğinize emin misiniz?');">
-                                            <input type="hidden" name="islem" value="isveren_sil">
-                                            <input type="hidden" name="isveren_id" value="<?= $isveren['isveren_id'] ?>">
-                                            <button type="submit" class="action-btn btn-delete">Sil</button>
+                                        <form action="admin_islem.php" method="POST" onsubmit="return confirm('Are you sure you want to delete this employer and all their job listings?');">
+                                            <input type="hidden" name="action" value="delete_employer">
+                                            <input type="hidden" name="employer_id" value="<?= $isveren['isveren_id'] ?>">
+                                            <button type="submit" class="action-btn btn-delete">Delete</button>
                                         </form>
                                     </td>
                                 </tr>
@@ -187,22 +187,22 @@ if ($is_logged_in) {
                         </tbody>
                     </table>
                 <?php else: ?>
-                    <p>Sistemde henüz kayıtlı işveren bulunmuyor.</p>
+                    <p>No registered employers found in the system.</p>
                 <?php endif; ?>
             </div>
 
             <div class="card">
-                <h3 style="color: #4CAF50;">Sistemdeki Tüm İş İlanları</h3>
+                <h3 style="color: #4CAF50;">All Job Advertisements in System</h3>
                 <?php if($ilan_sorgu->num_rows > 0): ?>
                     <table>
                         <thead>
                             <tr>
                                 <th>ID</th>
-                                <th>Şirket</th>
-                                <th>Pozisyon</th>
-                                <th>Konum</th>
-                                <th>Son Başvuru</th>
-                                <th>İşlemler</th>
+                                <th>Company</th>
+                                <th>Position</th>
+                                <th>Location</th>
+                                <th>Deadline</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -214,10 +214,10 @@ if ($is_logged_in) {
                                     <td><?= htmlspecialchars($ilan['konum']) ?></td>
                                     <td><?= htmlspecialchars($ilan['son_basvuru']) ?></td>
                                     <td>
-                                        <form action="admin_islem.php" method="POST" style="margin:0;" onsubmit="return confirm('Bu ilanı silmek istediğinize emin misiniz?');">
-                                            <input type="hidden" name="islem" value="ilan_sil">
-                                            <input type="hidden" name="ilan_id" value="<?= $ilan['ilan_id'] ?>">
-                                            <button type="submit" class="action-btn btn-delete">Sil</button>
+                                        <form action="admin_islem.php" method="POST" style="margin:0;" onsubmit="return confirm('Are you sure you want to delete this job listing?');">
+                                            <input type="hidden" name="action" value="delete_job">
+                                            <input type="hidden" name="job_id" value="<?= $ilan['ilan_id'] ?>">
+                                            <button type="submit" class="action-btn btn-delete">Delete</button>
                                         </form>
                                     </td>
                                 </tr>
@@ -225,7 +225,7 @@ if ($is_logged_in) {
                         </tbody>
                     </table>
                 <?php else: ?>
-                    <p>Sistemde henüz yayınlanmış ilan bulunmuyor.</p>
+                    <p>No published job advertisements found in the system.</p>
                 <?php endif; ?>
             </div>
         <?php endif; ?>

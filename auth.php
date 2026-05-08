@@ -11,23 +11,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $password = $_POST['password'] ?? '';
 
         if (empty($email) || empty($password)) {
-            header("Location: login.php?error=Lütfen tüm alanları doldurun.");
+            header("Location: login.php?error=Please fill in all fields.");
             exit;
         }
 
         try {
-            // E-posta kullanımda mı kontrolü
+            // Check if email is already in use
             $checkStmt = $pdo->prepare("SELECT user_id FROM Users WHERE email = ?");
             $checkStmt->execute([$email]);
             if ($checkStmt->rowCount() > 0) {
-                header("Location: login.php?error=Bu e-posta adresi zaten kullanılıyor.");
+                header("Location: login.php?error=This email address is already in use.");
                 exit;
             }
 
-            // Şifreyi hashle (Güvenlik için bcrypt)
+            // Hash the password (using bcrypt for security)
             $password_hash = password_hash($password, PASSWORD_DEFAULT);
 
-            // Transaction başlat, çünkü 2 tabloya yazacağız (Users ve Profiles)
+            // Start transaction because we will write to 2 tables (Users and Profiles)
             $pdo->beginTransaction();
 
             $stmt = $pdo->prepare("INSERT INTO Users (email, password_hash, user_type) VALUES (?, ?, ?)");
@@ -51,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         } catch (PDOException $e) {
             $pdo->rollBack();
-            header("Location: login.php?error=Veritabanı hatası oluştu.");
+            header("Location: login.php?error=A database error occurred.");
             exit;
         }
 
@@ -60,7 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $password = $_POST['password'] ?? '';
 
         if (empty($email) || empty($password)) {
-            header("Location: login.php?error=E-posta ve şifre gereklidir.");
+            header("Location: login.php?error=Email and password are required.");
             exit;
         }
 
@@ -70,19 +70,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $user = $stmt->fetch();
 
             if ($user && password_verify($password, $user['password_hash'])) {
-                // Giriş başarılı
+                // Login successful
                 $_SESSION['user_id'] = $user['user_id'];
                 $_SESSION['user_type'] = $user['user_type'];
                 $_SESSION['email'] = $user['email'];
                 header("Location: index.php");
                 exit;
             } else {
-                // Giriş başarısız
-                header("Location: login.php?error=E-posta veya şifre hatalı.");
+                // Login failed
+                header("Location: login.php?error=Incorrect email or password.");
                 exit;
             }
         } catch (PDOException $e) {
-            header("Location: login.php?error=Veritabanı hatası oluştu.");
+            header("Location: login.php?error=A database error occurred.");
             exit;
         }
     }

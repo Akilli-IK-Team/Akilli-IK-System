@@ -1,17 +1,17 @@
 <?php
 session_start();
-// Eğer kullanıcı zaten giriş yapmışsa ana sayfaya yönlendir
+// If user is already logged in, redirect to index
 if (isset($_SESSION['user_id'])) {
     header("Location: index.php");
     exit;
 }
 ?>
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Giriş Yap / Kayıt Ol - SmartHR</title>
+    <title>Login / Register - SmartHR</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -31,13 +31,13 @@ if (isset($_SESSION['user_id'])) {
 <body class="bg-brand-50 flex items-center justify-center min-h-screen">
 
     <div class="bg-white p-8 rounded-2xl shadow-xl border border-brand-100 w-full max-w-md relative overflow-hidden">
-        <!-- Dekoratif Arkaplan Şekli -->
+        <!-- Decorative Background Shapes -->
         <div class="absolute top-0 right-0 -mr-8 -mt-8 w-32 h-32 rounded-full bg-brand-100 opacity-50 blur-2xl"></div>
         <div class="absolute bottom-0 left-0 -ml-8 -mb-8 w-24 h-24 rounded-full bg-brand-500 opacity-20 blur-xl"></div>
 
         <div class="text-center mb-8 relative z-10">
             <h1 class="text-3xl font-extrabold text-brand-700">SmartHR</h1>
-            <p class="text-gray-500 mt-2">Kariyerinize yön verin</p>
+            <p class="text-gray-500 mt-2">Guide your career</p>
         </div>
 
         <?php if (isset($_GET['error'])): ?>
@@ -47,78 +47,78 @@ if (isset($_SESSION['user_id'])) {
         <?php endif; ?>
         <?php if (isset($_GET['success'])): ?>
             <div class="bg-green-100 text-green-700 p-3 rounded-lg mb-4 text-sm text-center font-medium border border-green-200 relative z-10">
-                Kayıt başarılı! Şimdi giriş yapabilirsiniz.
+                Registration successful! You can now log in.
             </div>
         <?php endif; ?>
 
-        <!-- Tab Seçimi -->
+        <!-- Tab Selection -->
         <div class="flex mb-6 border-b border-gray-200 relative z-10">
-            <button id="tab-login" onclick="switchTab('login')" class="w-1/2 pb-3 font-semibold text-brand-600 border-b-2 border-brand-600 transition-colors">Giriş Yap</button>
-            <button id="tab-register" onclick="switchTab('register')" class="w-1/2 pb-3 font-semibold text-gray-500 hover:text-brand-500 transition-colors">Üye Ol</button>
+            <button id="tab-login" onclick="switchTab('login')" class="w-1/2 pb-3 font-semibold text-brand-600 border-b-2 border-brand-600 transition-colors">Login</button>
+            <button id="tab-register" onclick="switchTab('register')" class="w-1/2 pb-3 font-semibold text-gray-500 hover:text-brand-500 transition-colors">Sign Up</button>
         </div>
 
-        <!-- Giriş Yap Formu -->
+        <!-- Login Form -->
         <form id="form-login" action="auth.php" method="POST" class="space-y-5 relative z-10">
             <input type="hidden" name="action" value="login">
             
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">E-Posta Adresi</label>
-                <input type="email" name="email" required class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition outline-none" placeholder="ornek@mail.com">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                <input type="email" name="email" required class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition outline-none" placeholder="example@mail.com">
             </div>
 
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Şifre</label>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
                 <input type="password" name="password" required class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition outline-none" placeholder="••••••••">
             </div>
 
             <button type="submit" class="w-full bg-brand-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-brand-700 hover:shadow-lg transition transform hover:-translate-y-0.5">
-                Giriş Yap
+                Login
             </button>
         </form>
 
-        <!-- Üye Ol Formu (Gizli Başlar) -->
+        <!-- Register Form (Hidden by default) -->
         <form id="form-register" action="auth.php" method="POST" class="space-y-5 hidden relative z-10">
             <input type="hidden" name="action" value="register">
 
             <div class="grid grid-cols-2 gap-4">
                 <label class="cursor-pointer">
                     <input type="radio" name="user_type" value="candidate" class="peer sr-only" checked onchange="toggleFields()">
-                    <div class="text-center px-4 py-2 border border-gray-300 rounded-lg peer-checked:border-brand-500 peer-checked:bg-brand-50 peer-checked:text-brand-700 font-medium transition">Adayım</div>
+                    <div class="text-center px-4 py-2 border border-gray-300 rounded-lg peer-checked:border-brand-500 peer-checked:bg-brand-50 peer-checked:text-brand-700 font-medium transition">I'm a Candidate</div>
                 </label>
                 <label class="cursor-pointer">
                     <input type="radio" name="user_type" value="employer" class="peer sr-only" onchange="toggleFields()">
-                    <div class="text-center px-4 py-2 border border-gray-300 rounded-lg peer-checked:border-brand-500 peer-checked:bg-brand-50 peer-checked:text-brand-700 font-medium transition">İşverenim</div>
+                    <div class="text-center px-4 py-2 border border-gray-300 rounded-lg peer-checked:border-brand-500 peer-checked:bg-brand-50 peer-checked:text-brand-700 font-medium transition">I'm an Employer</div>
                 </label>
             </div>
 
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">E-Posta Adresi</label>
-                <input type="email" name="email" required class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-500 outline-none" placeholder="ornek@mail.com">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                <input type="email" name="email" required class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-500 outline-none" placeholder="example@mail.com">
             </div>
 
             <div id="candidate-fields" class="grid grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Ad</label>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">First Name</label>
                     <input type="text" name="first_name" class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-500 outline-none">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Soyad</label>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
                     <input type="text" name="last_name" class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-500 outline-none">
                 </div>
             </div>
 
             <div id="employer-fields" class="hidden">
-                <label class="block text-sm font-medium text-gray-700 mb-1">Şirket Adı</label>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Company Name</label>
                 <input type="text" name="company_name" class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-500 outline-none">
             </div>
 
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Şifre</label>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
                 <input type="password" name="password" required class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-500 outline-none" placeholder="••••••••">
             </div>
 
             <button type="submit" class="w-full bg-brand-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-brand-700 hover:shadow-lg transition transform hover:-translate-y-0.5">
-                Kayıt Ol
+                Register
             </button>
         </form>
     </div>
